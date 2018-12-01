@@ -2,7 +2,8 @@ package com.github.fbaierl.rxpuppeteer
 
 import com.github.fbaierl.tarjan.TarjanRecursive._
 import rx.Ctx.Owner.Unsafe._
-import rx.Rx
+import rx.{Obs, Rx}
+
 import scala.collection.mutable
 import scala.language.{existentials, implicitConversions}
 
@@ -13,7 +14,7 @@ object RxPuppeteer {
 
   private var deps: List[(Rx[_], Rx[_])] = List()
 
-  private def activate (x: Rx[_], y: Rx[_]): Unit = {
+  private def activate (x: Rx[_], y: Rx[_]): Obs = {
     x.triggerLater{
       y.recalc()
     }
@@ -43,7 +44,7 @@ object RxPuppeteer {
     * x.triggerLater { y.recalc() }
     * }}}, but only if this does not add a cyclic or duplicate relationship to the previously activated rx dependencies.
     */
-  def ++ (x: Rx[_], y: Rx[_]): RxPuppeteer.type = {
+  def add (x: Rx[_], y: Rx[_]): Obs = {
     val newList: List[(Rx[_], Rx[_])] = (x,y) :: deps
     if(cyclic(newList) || x == y){
       throw RxDependencyException(
@@ -57,9 +58,8 @@ object RxPuppeteer {
            | $x --> $y
            | Reason: Dependency already activated!""".stripMargin)
     } else {
-      activate(x, y)
       deps = newList
+      activate(x, y)
     }
-    this
   }
 }

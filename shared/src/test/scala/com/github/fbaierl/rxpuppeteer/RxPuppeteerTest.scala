@@ -53,4 +53,22 @@ class RxPuppeteerTest extends FlatSpec {
     }
   }
 
+  it should "should work with multiple targets." in {
+    val x = Var(0)
+    val y = Var(0)
+    val z = Var(0)
+    var zTriggered = false
+    var yTriggered = false
+    z.triggerLater { zTriggered = true }
+    y.triggerLater { yTriggered = true}
+
+    x() = 1
+    assert(!zTriggered)
+    assert(!yTriggered)
+    x ~~> (y, z)
+    x() = 2
+    assert(zTriggered)
+    assert(yTriggered)
+  }
+
 }
