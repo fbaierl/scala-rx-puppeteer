@@ -1,4 +1,4 @@
-# scala-rx-puppeteer
+# scala-rx-puppeteer [WORK IN PROGRESS]
 
 Scala-rx-puppeteer is an utility library for [Scala.Rx](https://github.com/lihaoyi/scala.rx) -  an experimental change propagation library for [Scala](http://www.scala-lang.org/).
 
