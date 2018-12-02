@@ -10,53 +10,74 @@ object RxPuppet {
 }
 
 class RxPuppet(val rx: Rx[_]) {
+
+  var condition: () => Boolean = () => true
+
   /**
-    * Usage:
-    * {{{
-    * // given x: Rx[T], y: Rx[T], z: Rx[T]
-    * x ~~> (y, z)
-    * }}}
-    *
-    * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
-    * {{{
-    * // given x: Rx[T], y: Rx[T], z: Rx[T]
-    * x.triggerLater {
-    *    y.recalc()
-    * }
-    *
-    * x.triggerLater {
-    *    z.recalc()
-    * }
-    * }}}
-    *
+    * TODO docu
+    * before and afterwards are not affected by this
+    * @param condition
+    * @return
     */
+  def activateIf(condition: () => Boolean): RxPuppet = {
+    this.condition = condition
+    this
+  }
+
+  def doAfterwards(func: => Unit): RxPuppet = {
+    // TODO
+    this
+  }
+
+
+  def doBefore(func: => Unit): RxPuppet = {
+    // TODO
+    this
+  }
+
+  /**
+   * Usage:
+   * {{{
+   * // given x: Rx[T], y: Rx[T], z: Rx[T]
+   * x ~~> (y, z)
+   * }}}
+   *
+   * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
+   * {{{
+   * // given x: Rx[T], y: Rx[T], z: Rx[T]
+   * x.triggerLater {
+   *    y.recalc()
+   * }
+   *
+   * x.triggerLater {
+   *    z.recalc()
+   * }
+   * }}}
+   *
+   */
   def ~~> (otherRxs: Rx[_]*): Seq[Obs] = {
-    otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx))
+    otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx, condition))
   }
 
-/**
-  * Usage:
-  * {{{
-  * // given x: Rx[T], y: Rx[T]
-  * x ~~> y
-  * }}}
-  *
-  * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
-  * {{{
-  * // given x: Rx[T], y: Rx[T]
-  * private val onXUpdated = x.triggerLater {
-  *    y.recalc()
-  * }
-  * }}}
-  */
+  /**
+   * Usage:
+   * {{{
+   * // given x: Rx[T], y: Rx[T]
+   * x ~~> y
+   * }}}
+   *
+   * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
+   * {{{
+   * // given x: Rx[T], y: Rx[T]
+   * private val onXUpdated = x.triggerLater {
+   *    y.recalc()
+   * }
+   * }}}
+   */
   def ~~> (otherRx: Rx[_]): Obs = {
-    RxPuppeteer add (rx, otherRx)
+    RxPuppeteer add (rx, otherRx, condition)
   }
 
-  // TODO method that allows duplicates
-
-  // TODO method that calls code before
-
-  // TODO method that calls code afterwards
-
+  // TODO trigger ~~>
+  // TODO triggerLater ~~~>
 }

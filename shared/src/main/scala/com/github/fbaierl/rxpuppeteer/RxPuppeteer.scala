@@ -14,9 +14,11 @@ object RxPuppeteer {
 
   private var deps: List[(Rx[_], Rx[_])] = List()
 
-  private def activate (x: Rx[_], y: Rx[_]): Obs = {
+  private def activate (x: Rx[_], y: Rx[_], condition: () => Boolean): Obs = {
     x.triggerLater{
-      y.recalc()
+      if(condition()){
+        y.recalc()
+      }
     }
   }
 
@@ -44,7 +46,7 @@ object RxPuppeteer {
     * x.triggerLater { y.recalc() }
     * }}}, but only if this does not add a cyclic or duplicate relationship to the previously activated rx dependencies.
     */
-  def add (x: Rx[_], y: Rx[_]): Obs = {
+  def add (x: Rx[_], y: Rx[_], condition: () => Boolean): Obs = {
     val newList: List[(Rx[_], Rx[_])] = (x,y) :: deps
     if(cyclic(newList) || x == y){
       throw RxDependencyException(
@@ -59,7 +61,7 @@ object RxPuppeteer {
            | Reason: Dependency already activated!""".stripMargin)
     } else {
       deps = newList
-      activate(x, y)
+      activate(x, y, condition)
     }
   }
 }

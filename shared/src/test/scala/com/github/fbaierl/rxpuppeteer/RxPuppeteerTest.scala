@@ -71,4 +71,22 @@ class RxPuppeteerTest extends FlatSpec {
     assert(yTriggered)
   }
 
+  it should "work with conditions." in {
+    val x = Var(0)
+    val y = Var(0)
+    var triggered = 0
+    def condition: () => Boolean = () => x.now == 2
+
+    y.triggerLater {
+      triggered += 1
+    }
+
+    assert(triggered == 0)
+    (x activateIf condition) ~~> y
+    x() = 1 // should not trigger since condition is still false
+    assert(triggered == 0)
+    x() = 2
+    assert(triggered == 1) // triggered b/c condition is true
+
+  }
 }
