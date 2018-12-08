@@ -105,7 +105,7 @@ For **Scala.js** add:
 libraryDependencies += todo
 ```
 
-# License:
+# License
 
 Copyright 2018 Florian Baierl
 

@@ -67,19 +67,19 @@ lazy val root = project.in(file(".")).
 lazy val rxPuppeteer = crossProject.in(file(".")).
   settings(
     name := "scala-rx-puppeteer",
-    version := "0.1.2",
+    version := "0.1",
     organization := "com.github.fbaierl",
     scalaVersion := "2.12.4",
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test",
     normalizedName := "scala-rx-puppeteer",
     crossScalaVersions := Seq("2.10.6", "2.11.11, 2.12.2"),
-    homepage := Some(url("https://github.com/fbaierl/scalajs-cross-compile-tarjan")),
+    homepage := Some(url("https://github.com/fbaierl/scala-rx-puppeteer")),
     licenses += ("MIT License", url("http://www.opensource.org/licenses/mit-license.php")),
     scmInfo := Some(ScmInfo(
-      url("https://github.com/fbaierl/scalajs-cross-compile-tarjan"),
-      "scm:git:git@github.com/fbaierl/scalajs-cross-compile-tarjan.git",
-      Some("scm:git:git@github.com/fbaierl/scalajs-cross-compile-tarjan.git"))),
+      url("https://github.com/fbaierl/scala-rx-puppeteer"),
+      "scm:git:git@github.com/fbaierl/scala-rx-puppeteer.git",
+      Some("scm:git:git@github.com/fbaierl/scala-rx-puppeteer.git"))),
     publishMavenStyle := true,
     isSnapshot := false,
     publishTo := {
