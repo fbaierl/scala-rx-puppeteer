@@ -7,6 +7,8 @@ the risk of introducing cyclic dependencies.
 These cyclic dependencies might be introduced when triggering the recalculation of an [Rx](http://www.lihaoyi.com/scala.rx/#rx.core.Rx) while performing side effects 
 on an observer ([Obs](http://www.lihaoyi.com/scala.rx/#rx.core.Obs)) change.
 
+Scala-rx-puppeteer offers some alternative syntax to create those dependencies and **throws an exception** if a dependency
+is added that would lead to a cyclic dependency.
 
 # Background
 
