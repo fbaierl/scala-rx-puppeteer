@@ -1,6 +1,12 @@
-# scala-rx-puppeteer [WORK IN PROGRESS]
+# scala-rx-puppeteer ~~> ~~~> [WORK IN PROGRESS ]
 
-Scala-rx-puppeteer is an utility library for [Scala.Rx](https://github.com/lihaoyi/scala.rx) -  an experimental change propagation library for [Scala](http://www.scala-lang.org/).
+Scala-rx-puppeteer is an utility library for [Scala.Rx](https://github.com/lihaoyi/scala.rx) 
+(an experimental change propagation library for [Scala](http://www.scala-lang.org/)) that aims to nullify 
+the risk of introducing cyclic dependencies.
+
+These cyclic dependencies might be introduced when triggering the recalculation of a [Rx](http://www.lihaoyi.com/scala.rx/#rx.core.Rx) while performing side effects 
+on an observer ([Obs](http://www.lihaoyi.com/scala.rx/#rx.core.Obs)) change.
+
 
 # Background
 
@@ -24,14 +30,15 @@ x.triggerLater {
    y.recalc()
 }
 ```
-Specifically, I noticed that I use `recalc()` inside `triggerLater` code blocks quite often.
+Specifically, I noticed that I had use `recalc()` inside `triggerLater` code blocks quite often.
 My use cases were mostly that I needed to trigger a redraw in my [Scala.js](https://www.scala-js.org/) application every time `x` changes. Also data `y`'s representation *indirectly* depends on `x`, so everytime `x` changes, the observers of `y` need to be triggered as well so that all data depending on `y` is redrawn as well.
 
 **The Problem:** Handling these dependencies can easily get out-of-hand because of cyclic relationships and duplicates. Finding these errors quickly was becoming a problem as the application grew larger and more complex.
 
 # HOWTO  
  
- using scala-rx-puppeteer, the above can be rewritten like this:
+ 
+**Basic example:** Using scala-rx-puppeteer, the example given above can be rewritten like this:
 ```scala
 import // TODO 
 
@@ -50,6 +57,37 @@ x ~~~> y
 ```
 
 Writing `x ~~~> y` in this case equals `x.triggerLater { y.recalc() }` but throws an AssertionError if this dependency introduces a cyclic relationship or has already been added once.
+
+**Advanced example:** Code can be executed before and after the change propagation. Also, the change propagation can be bound to a condition.
+```scala
+import // TODO 
+
+val x = Var(1)
+val y = Var(2)
+val condition = false
+
+x.trigger {
+  /* code to run before change propagation */}
+  if(condition){
+    y.recalc()
+  }
+  /* code to run after after propagation */
+}
+
+```
+Can be rewritten using rx-puppeteer like this:
+```scala
+import // TODO 
+
+val x = Var(1)
+val y = Var(2)
+val condition = false
+
+(x runBefore  (() => {/* code to run before change propagation */})
+   runAfter   (() => {/* code to run before after propagation */})
+   activateIf (() => condition)
+  ) ~~> y 
+```
 
 # Getting Started
 

@@ -11,12 +11,14 @@ object RxPuppet {
 
 class RxPuppet(val rx: Rx[_]) {
 
-  var condition: () => Boolean = () => true
+  private var condition: () => Boolean = () => true
+  private var runAfter: () => Unit  = () => {}
+  private var runBefore: () => Unit = () => {}
 
   /**
-    * TODO docu
-    * before and afterwards are not affected by this
-    * @param condition
+    * Adds a condition to check before triggering the recalc dependency.
+    * {{{doBefore(func: => Unit)}}} and {{{doAfterwards(func: => Unit)}}} and  are not affected by this condition.
+    * @param condition the condition to check before triggering
     * @return
     */
   def activateIf(condition: () => Boolean): RxPuppet = {
@@ -24,14 +26,23 @@ class RxPuppet(val rx: Rx[_]) {
     this
   }
 
-  def doAfterwards(func: => Unit): RxPuppet = {
-    // TODO
+  /**
+    * Code to run after activating the rx dependency.
+    * @param func code to run
+    * @return
+    */
+  def runAfter(func: () => Unit): RxPuppet = {
+    runAfter = func
     this
   }
 
-
-  def doBefore(func: => Unit): RxPuppet = {
-    // TODO
+  /**
+    * Code to run before activating the rx dependency.
+    * @param func code to run
+    * @return
+    */
+  def runBefore(func: () => Unit): RxPuppet = {
+    runBefore = func
     this
   }
 
@@ -56,14 +67,14 @@ class RxPuppet(val rx: Rx[_]) {
    *
    */
   def ~~> (otherRxs: Rx[_]*): Seq[Obs] = {
-    otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx, condition))
+    otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, false))
   }
 
   /**
    * Usage:
    * {{{
    * // given x: Rx[T], y: Rx[T]
-   * x ~~> y
+   * x ~~~> y
    * }}}
    *
    * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
@@ -75,9 +86,49 @@ class RxPuppet(val rx: Rx[_]) {
    * }}}
    */
   def ~~> (otherRx: Rx[_]): Obs = {
-    RxPuppeteer add (rx, otherRx, condition)
+    RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, false)
   }
 
-  // TODO trigger ~~>
-  // TODO triggerLater ~~~>
+  /**
+    * Usage:
+    * {{{
+    * // given x: Rx[T], y: Rx[T], z: Rx[T]
+    * x ~~~> (y, z)
+    * }}}
+    *
+    * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
+    * {{{
+    * // given x: Rx[T], y: Rx[T], z: Rx[T]
+    * x.triggerLater {
+    *    y.recalc()
+    * }
+    *
+    * x.triggerLater {
+    *    z.recalc()
+    * }
+    * }}}
+    *
+    */
+  def ~~~> (otherRxs: Rx[_]*): Seq[Obs] = {
+    otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, true))
+  }
+
+  /**
+    * Usage:
+    * {{{
+    * // given x: Rx[T], y: Rx[T]
+    * x ~~> y
+    * }}}
+    *
+    * This checks for cyclic dependencies and duplicates and is otherwise functionally equivalent to writing:
+    * {{{
+    * // given x: Rx[T], y: Rx[T]
+    * private val onXUpdated = x.triggerLater {
+    *    y.recalc()
+    * }
+    * }}}
+    */
+  def ~~~> (otherRx: Rx[_]): Obs = {
+    RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, true)
+  }
 }

@@ -17,7 +17,6 @@ class RxPuppeteerTest extends FlatSpec {
 
     a.triggerLater {
       triggered = true
-
     }
 
     x() = 1
@@ -88,5 +87,26 @@ class RxPuppeteerTest extends FlatSpec {
     x() = 2
     assert(triggered == 1) // triggered b/c condition is true
 
+  }
+
+  it should "work with runBefore and runAfter." in {
+    val x = Var(0)
+    val y = Var(0)
+    var triggeredBefore = false
+    var triggeredAfter = false
+    var condition = false
+
+    (x runBefore  (() => triggeredBefore = true)
+       runAfter   (() => triggeredAfter = true)
+       activateIf (() => condition)
+      ) ~~> y
+
+    (x runBefore  (() => {/* code to run before change propagation */})
+       runAfter   (() => {/* code to run before after propagation */})
+       activateIf (() => condition)
+      ) ~~> y
+
+    assert(triggeredBefore)
+    assert(triggeredAfter)
   }
 }
