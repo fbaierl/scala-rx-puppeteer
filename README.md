@@ -1,4 +1,4 @@
-# scala-rx-puppeteer ~~> ~~~> [WORK IN PROGRESS ]
+# scala-rx-puppeteer ~~> ~~~>
 
 Scala-rx-puppeteer is an utility library for [Scala.Rx](https://github.com/lihaoyi/scala.rx) 
 (an experimental change propagation library for [Scala](http://www.scala-lang.org/)) that aims to nullify 
@@ -40,7 +40,7 @@ My use cases were mostly that I needed to trigger a redraw in my [Scala.js](http
  
 **Basic example:** Using scala-rx-puppeteer, the example given above can be rewritten like this:
 ```scala
-import // TODO 
+import com.github.fbaierl.rxpuppeteer.RxPuppet.rxToPuppet
 
 val x = Var(1)
 val y = Var(2)
@@ -60,7 +60,6 @@ Writing `x ~~~> y` in this case equals `x.triggerLater { y.recalc() }` but throw
 
 **Advanced example:** Code can be executed before and after the change propagation. Also, the change propagation can be bound to a condition.
 ```scala
-import // TODO 
 
 val x = Var(1)
 val y = Var(2)
@@ -77,17 +76,20 @@ x.trigger {
 ```
 Can be rewritten using rx-puppeteer like this:
 ```scala
-import // TODO 
+import com.github.fbaierl.rxpuppeteer.RxPuppet.rxToPuppet
 
 val x = Var(1)
 val y = Var(2)
-val condition = false
+def condition: Boolean = false
 
-(x runBefore  (() => {/* code to run before change propagation */})
-   runAfter   (() => {/* code to run before after propagation */})
-   activateIf (() => condition)
+(x runBefore  {/* code to run before change propagation */}
+   runAfter   {/* code to run after change propagation */}
+   activateIf condition
   ) ~~> y 
 ```
+
+`~~>` results in **trigger** being called on the Rx, 
+`~~~>` results in **triggerLater** being called on the Rx.
 
 # Getting Started
 
@@ -96,13 +98,13 @@ Scala-rx-puppeteer is available on [Maven Central](http://search.maven.org/#arti
 In order to get started, simply add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += todo
+libraryDependencies += "com.github.fbaierl" %% "scala-rx-puppeteer" % "0.1.2"
 ```
 
 For **Scala.js** add:
 
 ```scala
-libraryDependencies += todo
+libraryDependencies += "com.github.fbaierl" %%% "scala-rx-puppeteer" % "0.1.2"
 ```
 
 # License

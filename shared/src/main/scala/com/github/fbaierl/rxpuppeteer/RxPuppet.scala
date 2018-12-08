@@ -21,28 +21,28 @@ class RxPuppet(val rx: Rx[_]) {
     * @param condition the condition to check before triggering
     * @return
     */
-  def activateIf(condition: () => Boolean): RxPuppet = {
-    this.condition = condition
+  def activateIf(condition: => Boolean): RxPuppet = {
+    this.condition = () => condition
     this
   }
 
   /**
     * Code to run after activating the rx dependency.
-    * @param func code to run
+    * @param thunk code to run
     * @return
     */
-  def runAfter(func: () => Unit): RxPuppet = {
-    runAfter = func
+  def runAfter(thunk: => Unit): RxPuppet = {
+    runAfter = () => thunk
     this
   }
 
   /**
     * Code to run before activating the rx dependency.
-    * @param func code to run
+    * @param thunk code to run
     * @return
     */
-  def runBefore(func: () => Unit): RxPuppet = {
-    runBefore = func
+  def runBefore(thunk: => Unit): RxPuppet = {
+    runBefore = () => thunk
     this
   }
 

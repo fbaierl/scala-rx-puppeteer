@@ -14,7 +14,7 @@ lazy val root = project.in(file(".")).
 lazy val rxPuppeteer = crossProject.in(file(".")).
   settings(
     name := "scala-rx-puppeteer",
-    version := "0.1.1",
+    version := "0.1.2",
     organization := "com.github.fbaierl",
     scalaVersion := "2.12.4",
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5",
