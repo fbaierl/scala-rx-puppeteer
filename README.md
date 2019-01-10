@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/fbaierl/scala-rx-puppeteer.svg?branch=master)](https://travis-ci.org/fbaierl/scala-rx-puppeteer)
+[![Scala.js](https://www.scala-js.org/assets/badges/scalajs-0.6.17.svg)](https://www.scala-js.org)
+
 # scala-rx-puppeteer ~~> ~~~>
 
 Scala-rx-puppeteer is an utility library for [Scala.Rx](https://github.com/lihaoyi/scala.rx) 
