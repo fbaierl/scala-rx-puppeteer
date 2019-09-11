@@ -1,7 +1,6 @@
 package com.github.fbaierl.rxpuppeteer
 
 import com.github.fbaierl.tarjan.TarjanRecursive._
-import rx.Ctx.Owner.Unsafe._
 import rx.{Obs, Rx}
 
 import scala.collection.mutable
@@ -15,14 +14,14 @@ object RxPuppeteer {
   private var deps: List[(Rx[_], Rx[_])] = List()
 
   private def activate (x: Rx[_], y: Rx[_], condition: () => Boolean, runBefore: () => Unit, runAfter: () => Unit,
-                        triggerLater: Boolean): Obs = {
+                        triggerLater: Boolean)(implicit ownerCtx : rx.Ctx.Owner): Obs = {
     def func: () => Unit = () => {
       runBefore()
       if(condition()){ y.recalc() }
       runAfter()
     }
     if(triggerLater){
-      x.triggerLater{
+      x.triggerLater {
         func()
       }
     } else {
@@ -57,7 +56,7 @@ object RxPuppeteer {
     * }}}, but only if this does not add a cyclic or duplicate relationship to the previously activated rx dependencies.
     */
   def add (x: Rx[_], y: Rx[_], condition: () => Boolean, runBefore: () => Unit, runAfter: () => Unit,
-           triggerLater: Boolean): Obs = {
+           triggerLater: Boolean)(implicit ownerCtx : rx.Ctx.Owner): Obs = {
     val newList: List[(Rx[_], Rx[_])] = (x,y) :: deps
     if(cyclic(newList) || x == y){
       throw RxDependencyException(

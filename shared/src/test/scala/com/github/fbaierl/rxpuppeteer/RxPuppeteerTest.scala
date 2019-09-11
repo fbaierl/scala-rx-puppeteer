@@ -2,10 +2,11 @@ package com.github.fbaierl.rxpuppeteer
 
 import org.scalatest.FlatSpec
 import rx._
-import rx.Ctx.Owner.Unsafe._
 import com.github.fbaierl.rxpuppeteer.RxPuppet.rxToPuppet
 
 class RxPuppeteerTest extends FlatSpec {
+
+  implicit val owner: Ctx.Owner = Ctx.Owner.safe()
 
   "~~>" should "should trigger recalc()." in {
     val x = Var(0)

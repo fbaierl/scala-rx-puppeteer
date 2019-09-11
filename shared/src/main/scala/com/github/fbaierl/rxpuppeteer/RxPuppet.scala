@@ -1,6 +1,6 @@
 package com.github.fbaierl.rxpuppeteer
 
-import rx.{Obs, Rx, Var}
+import rx.{Ctx, Obs, Rx, Var}
 
 import scala.language.{existentials, implicitConversions}
 
@@ -66,7 +66,7 @@ class RxPuppet(val rx: Rx[_]) {
    * }}}
    *
    */
-  def ~~> (otherRxs: Rx[_]*): Seq[Obs] = {
+  def ~~> (otherRxs: Rx[_]*)(implicit ownerCtx: Ctx.Owner): Seq[Obs] = {
     otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, false))
   }
 
@@ -85,7 +85,7 @@ class RxPuppet(val rx: Rx[_]) {
    * }
    * }}}
    */
-  def ~~> (otherRx: Rx[_]): Obs = {
+  def ~~> (otherRx: Rx[_])(implicit ownerCtx: Ctx.Owner): Obs = {
     RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, false)
   }
 
@@ -109,7 +109,7 @@ class RxPuppet(val rx: Rx[_]) {
     * }}}
     *
     */
-  def ~~~> (otherRxs: Rx[_]*): Seq[Obs] = {
+  def ~~~> (otherRxs: Rx[_]*)(implicit ownerCtx: Ctx.Owner): Seq[Obs] = {
     otherRxs.map(otherRx => RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, true))
   }
 
@@ -128,7 +128,7 @@ class RxPuppet(val rx: Rx[_]) {
     * }
     * }}}
     */
-  def ~~~> (otherRx: Rx[_]): Obs = {
+  def ~~~> (otherRx: Rx[_])(implicit ownerCtx: Ctx.Owner): Obs = {
     RxPuppeteer add (rx, otherRx, condition, runBefore, runAfter, true)
   }
 }

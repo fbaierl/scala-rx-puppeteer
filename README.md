@@ -103,13 +103,13 @@ Scala-rx-puppeteer is available on [Maven Central](http://search.maven.org/#arti
 In order to get started, simply add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "com.github.fbaierl" %% "scala-rx-puppeteer" % "0.1.2"
+libraryDependencies += "com.github.fbaierl" %% "scala-rx-puppeteer" % "0.1.3"
 ```
 
 For **Scala.js** add:
 
 ```scala
-libraryDependencies += "com.github.fbaierl" %%% "scala-rx-puppeteer" % "0.1.2"
+libraryDependencies += "com.github.fbaierl" %%% "scala-rx-puppeteer" % "0.1.3"
 ```
 
 # License
